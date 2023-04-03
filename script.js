@@ -1,49 +1,52 @@
-// Palabra secreta
-var palabraSecreta = "argentina";
+// Palabras posibles
+const words = ['javascript', 'programacion', 'desarrollo', 'tecnologia', 'html', 'css', 'fullstack'];
 
-// Letras adivinadas
-var letrasAdivinadas = [];
+// Número máximo de intentos
+const maxWrongGuesses = 6;
 
-// Número de intentos disponibles
-var intentosRestantes = 3;
+// Variables globales
+let word = '';
+let guessedLetters = [];
+let remainingGuesses = 0;
 
-// Función para procesar la letra introducida por el jugador
-function procesarLetra(letra) {
-  letrasAdivinadas.push(letra);
-  if (palabraSecreta.indexOf(letra) === -1) {
-    intentosRestantes--;
-  }
+// Seleccionar una palabra al azar
+function selectRandomWord(words) {
+  return words[Math.floor(Math.random() * words.length)];
 }
 
-// Bucle del juego
-while (intentosRestantes > 0) {
-  // Mostrar el estado actual del juego
-  var palabraActual = "";
-  for (var i = 0; i < palabraSecreta.length; i++) {
-    if (letrasAdivinadas.indexOf(palabraSecreta[i]) !== -1) {
-      palabraActual += palabraSecreta[i];
+// Inicializar el juego
+function initializeGame() {
+  word = selectRandomWord(words);
+  guessedLetters = [];
+  remainingGuesses = maxWrongGuesses;
+  updateUI();
+}
+
+// Actualizar la interfaz de usuario
+function updateUI() {
+  // Mostrar las letras adivinadas y los intentos restantes
+  document.getElementById('guessedLetters').textContent = `Letras adivinadas: ${guessedLetters.join(', ')}`;
+  document.getElementById('remainingGuesses').textContent = `Intentos restantes: ${remainingGuesses}`;
+
+  // Mostrar la palabra oculta
+  const wordContainer = document.getElementById('word');
+  wordContainer.innerHTML = '';
+  for (let i = 0; i < word.length; i++) {
+    const letter = word[i];
+    if (guessedLetters.includes(letter)) {
+      // Mostrar la letra adivinada
+      const letterElement = document.createElement('span');
+      letterElement.textContent = letter;
+      wordContainer.appendChild(letterElement);
     } else {
-      palabraActual += "_";
+      // Mostrar un guión bajo para las letras no adivinadas
+      const underscoreElement = document.createElement('span');
+      underscoreElement.textContent = '_';
+      wordContainer.appendChild(underscoreElement);
     }
   }
-  console.log(palabraActual);
-  console.log("Letras adivinadas: " + letrasAdivinadas.join(", "));
-  console.log("Intentos restantes: " + intentosRestantes);
-  
-  // Pedir al usuario que introduzca una letra
-  var letraIntroducida = prompt("Introduce una letra:");
-  
-  // Procesar la letra introducida
-  procesarLetra(letraIntroducida);
-  
-  // Comprobar si el jugador ha ganado
-  if (palabraSecreta === palabraActual && letrasAdivinadas.length === palabraSecreta.length) {
-    console.log("¡Felicidades, has ganado!");
-    break;
-  }
-}
 
-// Mensaje final de victoria o derrota
-if (intentosRestantes === 0) {
-  console.log("Lo siento, has perdido. La palabra secreta era '" + palabraSecreta + "'.");
-}
+  // Mostrar un mensaje si el jugador ha ganado o perdido
+  const messageElement = document.getElementById('message');
+  if (hasPlayerWon()) {
+    messageElement.textContent = '¡Felicidades, has gan
